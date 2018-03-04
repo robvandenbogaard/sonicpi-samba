@@ -1,0 +1,92 @@
+use_bpm 120
+use_debug false
+
+snare1 = [1, 0.4, 0.25, 0.9]
+snare2 = [1, 0.3, 0.3, 1, 0.3, 0.3, 1, 0.3, 0.3, 0.3, 1, 0.3, 0.3, 1, 0.3, 0.3]
+
+parts = {
+  :intro => {
+    :surdo_1a => [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0].ring,
+    :surdo_2a => [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0].ring,
+    :surdo_3a => [0].ring,
+    :caixa => [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, 0.3, 0.3, 0.5, 0.6, 0, 0.4, 0, 1, 0, 0, 0, 0, 0, 0, 0].ring,
+    :malacacheta => [1, 1, 0, 0.7, 1, 1, 0, 0.65, 1, 0, 1, 0, 0, 0.4, 0.2, 0.8, 1, 0.2, 0.3, 0.7, 0.9, 0, 0.5, 0, 1, 0.2, 0.4, 0.3, 1, 0, 0, 0].ring
+  },
+  :groove => {
+    :surdo_1a => [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0].ring,
+    :surdo_2a => [1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0].ring,
+    :surdo_3a => [0,0,0,0,1,0,1,0,0,0,0,0,1,1,0,1,0,0,0,0,1,0,1,0,0,0,1,0,1,1,0,1].ring,
+    :caixa => snare2.ring,
+    :malacacheta => [1, 0.2, 0.3, 1, 0.5, 0.3, 0.7, 0.4, 1, 0.15, 0.2, 0.75, 1, 0.25, 0.2, 0.65].ring
+  },
+  :break_1 => {
+    :surdo_1a => [0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0].ring,
+    :surdo_2a => [1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0].ring,
+    :surdo_3a => [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0].ring,
+    :caixa => [1, 0.3, 0.3, 0.5, 0.6, 0, 0.4, 0, 1, 0, 0, 0, 0, 0, 0, 0].ring,
+    :malacacheta => [1, 0.2, 0.3, 0.7, 0.9, 0, 0.5, 0, 1, 0, 0, 0, 0, 0, 0, 0].ring
+  },
+  :solo => {
+    :surdo_1a => [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0].ring,
+    :surdo_2a => [1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0].ring,
+    :surdo_3a => [0,0,0,0,1,0,1,0,0,0,0,0,1,1,0,1,0,0,0,0,1,0,1,0,0,0,1,0,1,1,0,1].ring,
+    :caixa => [0].ring,
+    :malacacheta => [1, 0.1, 0.2, 1, 0.4, 0.2, 0.8, 0.4, 1, 0.05, 0.1, 0.65, 1, 0.15, 0.1, 0.55].ring
+  },
+  :ending => {
+    :surdo_1a => [0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0].ring,
+    :surdo_2a => [1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0].ring,
+    :surdo_3a => [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0].ring,
+    :caixa => [1, 0.3, 0.3, 0.5, 0.6, 0, 0.4, 0, 1, 0, 0, 0, 0, 0, 0, 0].ring,
+    :malacacheta => [1, 0.2, 0.3, 0.7, 0.9, 0, 0.5, 0, 1, 0, 0, 0, 0, 0, 0, 0].ring
+  }
+}
+
+
+live_loop :perform do
+  braz_timing = [0.3, 0.22, 0.30, 0.35]
+  straight_timing = [0.25, 0.25, 0.25, 0.25]
+  braz_human_timing = [rrand(0.29, 0.31), rrand(0.2,0.25), rrand(0.29,0.31), rrand(0.34,0.36)]
+  timing = braz_human_timing
+  
+  2.times do perform_part(parts[:intro], timing) end
+  3.times do perform_part(parts[:groove], timing) end
+  perform_part(parts[:break_1], timing)
+  7.times do perform_part(parts[:solo], timing) end
+  perform_part(parts[:break_1], timing)
+  7.times do perform_part(parts[:groove], timing) end
+  perform_part(parts[:ending], timing)
+  
+  sleep(10)
+end
+
+def perform_part(part, timing)
+  16.times do
+    tick
+    
+    if part[:surdo_2a].look > 0
+      sample :bd_pure
+      sample :bd_boom, rate: 1
+    end
+    
+    if part[:surdo_1a].look > 0
+      sample :bd_pure
+      sample :bd_boom, rate: 0.75, amp: 2
+    end
+    
+    if part[:surdo_3a].look > 0
+      sample :bd_pure, rate: 2.2
+    end
+    
+    if (malacacheta = part[:malacacheta].look) > 0
+      sample :drum_snare_hard, rate: 1.8+(malacacheta/15), amp: 1.5*malacacheta*rrand(0.9,1.1)
+    end
+    
+    if (caixa = part[:caixa].look) > 0
+      sample :drum_snare_hard, rate: 1.0+(caixa/15), amp: caixa*rrand(0.9,1.1)
+    end
+    
+    sleep timing.ring.look / timing.reduce(:+)
+  end
+end
+
